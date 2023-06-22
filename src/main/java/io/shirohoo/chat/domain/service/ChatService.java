@@ -31,7 +31,7 @@ public class ChatService {
     }
 
     @Transactional
-    public Chat createChat(String topic, String password) {
+    public Chat createChat(String hostId, String topic, String password) {
         if (topic.isBlank()) {
             throw new UnsupportedOperationException("topic is blank");
         }
@@ -39,7 +39,10 @@ public class ChatService {
             password = null;
         }
 
-        Chat chat = new Chat(topic, password);
+        User host = userRepository.findById(hostId)
+                .orElseGet(() -> userRepository.save(new User(hostId)));
+
+        Chat chat = new Chat(host, topic, password);
         return chatRepository.save(chat);
     }
 

@@ -42,11 +42,11 @@ public class ChatController {
     @ResponseBody
     @PostMapping("/api/v1/chat")
     public Map<String, String> createChat(@RequestBody CreateChatRequest request) {
-        Chat chat = chatService.createChat(request.topic, request.password);
+        Chat chat = chatService.createChat(request.hostId, request.topic, request.password);
         return Map.of("chatId", chat.getChatId());
     }
 
-    private record CreateChatRequest(String topic, String password) {
+    private record CreateChatRequest(String hostId, String topic, String password) {
 
     }
 

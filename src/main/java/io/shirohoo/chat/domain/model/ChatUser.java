@@ -23,12 +23,12 @@ public class ChatUser {
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_guid", nullable = false)
+    @JoinColumn(name = "chat_guid", nullable = false, columnDefinition = "VARCHAR(36)")
     private Chat chat;
 
     @Id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_guid", nullable = false)
+    @JoinColumn(name = "user_guid", nullable = false, columnDefinition = "VARCHAR(36)")
     private User user;
 
     @CreatedDate

@@ -115,7 +115,7 @@
                     <td>
                         <select id="chat-type" name="chat-type">
                             <option value="public">Public</option>
-                            <option value="private">Private</option>
+                            <!--<option value="private">Private</option>-->
                         </select>
                     </td>
                 </tr>
@@ -168,6 +168,7 @@
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                hostId: userId,
                 topic: document.getElementById("topic").value,
                 password: document.getElementById("password").value,
             }),

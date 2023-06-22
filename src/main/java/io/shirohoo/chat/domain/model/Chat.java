@@ -5,9 +5,12 @@ import io.shirohoo.chat.domain.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,6 +29,10 @@ public class Chat {
     @Column(name = "chat_guid", nullable = false, length = 36)
     private String chatId;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "host_guid", nullable = false, columnDefinition = "VARCHAR(36)")
+    private User host;
+
     @Column(name = "topic", nullable = false)
     private String topic;
 
@@ -36,7 +43,8 @@ public class Chat {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public Chat(String topic, String password) {
+    public Chat(User host, String topic, String password) {
+        this.host = host;
         this.topic = topic;
         this.password = password;
     }

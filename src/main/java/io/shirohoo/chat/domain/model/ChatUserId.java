@@ -12,6 +12,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChatUserId implements Serializable {
+
     private String chat;
+
     private String user;
+
 }
