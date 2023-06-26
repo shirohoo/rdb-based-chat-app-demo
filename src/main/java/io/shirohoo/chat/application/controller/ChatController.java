@@ -47,7 +47,6 @@ public class ChatController {
     }
 
     private record CreateChatRequest(String hostId, String topic, String password) {
-
     }
 
     @GetMapping("/chat")

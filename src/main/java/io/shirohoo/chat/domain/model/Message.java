@@ -1,10 +1,10 @@
 package io.shirohoo.chat.domain.model;
 
 import io.shirohoo.chat.domain.Chat;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,12 +28,12 @@ public class Message {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long messageId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_guid", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_guid", nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(name = "content", nullable = false)
@@ -49,4 +49,8 @@ public class Message {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "Message{messageId=%d, chat=%s, user=%s, content='%s', createdAt=%s}".formatted(messageId, chat, user, content, createdAt);
+    }
 }

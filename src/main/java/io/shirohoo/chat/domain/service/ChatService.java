@@ -10,12 +10,14 @@ import io.shirohoo.chat.domain.repository.ChatUserRepository;
 import io.shirohoo.chat.domain.repository.MessageRepository;
 import io.shirohoo.chat.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
@@ -72,6 +74,7 @@ public class ChatService {
         User user = userRepository.findById(userId).orElseThrow();
         Message message = new Message(chat, user, content);
         messageRepository.save(message);
+        log.info("Saved: {}", message);
     }
 
     @Transactional(readOnly = true)

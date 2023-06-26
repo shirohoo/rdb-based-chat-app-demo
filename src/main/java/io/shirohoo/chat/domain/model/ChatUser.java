@@ -1,10 +1,10 @@
 package io.shirohoo.chat.domain.model;
 
 import io.shirohoo.chat.domain.Chat;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 public class ChatUser {
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chat_guid", nullable = false, columnDefinition = "VARCHAR(36)")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "chat_id", nullable = false, columnDefinition = "VARCHAR(36)")
     private Chat chat;
 
     @Id
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_guid", nullable = false, columnDefinition = "VARCHAR(36)")
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "VARCHAR(36)")
     private User user;
 
     @CreatedDate

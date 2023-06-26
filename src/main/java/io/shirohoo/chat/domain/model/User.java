@@ -15,10 +15,15 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "user_guid", nullable = false, length = 36)
+    @Column(name = "user_id", nullable = false, length = 36)
     private String userId;
 
     public User(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "User{userId='%s'}".formatted(userId);
     }
 }
