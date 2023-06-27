@@ -25,8 +25,8 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @MessageMapping("/api/v1/chat/{chatId}/messages")
     @SendTo("/topic/chat/{chatId}/messages")
+    @MessageMapping("/api/v1/chat/{chatId}/messages")
     public ChatMessage send(@DestinationVariable String chatId, @RequestBody ChatMessage chatMessage) {
         chatService.saveMessage(chatId, chatMessage.userId(), chatMessage.content());
         return chatMessage;

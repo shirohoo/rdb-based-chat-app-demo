@@ -1,4 +1,4 @@
-insert into user (user_id)
+insert into users (user_id)
 values ('ecfaeef9-20d7-40da-847d-941ae25e0789');
 
 insert into chat (chat_id, host_id, topic, created_at)
