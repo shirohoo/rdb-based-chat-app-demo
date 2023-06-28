@@ -6,7 +6,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
-        .message-bubble {
+        .chatMessage-bubble {
             display: inline-block;
             background-color: #f2f2f2;
             border-radius: 10px;
@@ -38,19 +38,19 @@
     </style>
 </head>
 <body>
-<input id="chatId" type="hidden" th:value="${chatUser.getId().getChat()}">
-<input id="userId" type="hidden" th:value="${chatUser.getId().getUser()}">
+<input id="chatId" type="hidden" th:value="${chatRoom.getId().getChat()}">
+<input id="userId" type="hidden" th:value="${chatRoom.getId().getParticipant()}">
 
 <div>
     <button class="leave-button" onclick="window.location.href='/'">Leave</button>
 </div>
 
 <div id="chatting" style="display: block">
-    <span th:each="message : ${messages}">
-        <span class="message-bubble">
-            <span class="user-id" th:text="'@' + ${message.user.userId}"></span>
+    <span th:each="chatMessage : ${chatMessages}">
+        <span class="chatMessage-bubble">
+            <span class="user-id" th:text="'@' + ${chatMessage.getSender().getId()}"></span>
         </span>
-        <span th:text="': ' + ${message.getContent()}"></span>
+        <span th:text="': ' + ${chatMessage.getContent()}"></span>
         <br>
     </span>
 </div>
@@ -79,7 +79,7 @@
         messageInput.value = ""
     }
 
-    const showMessage = (userId, message) => {
+    const showMessage = (userId, chatMessage) => {
         const messageDiv = document.createElement('div')
 
         const userIdSpan = document.createElement('span')
@@ -87,10 +87,10 @@
         userIdSpan.innerText = `@${userId}`
 
         const messageSpan = document.createElement('span')
-        messageSpan.innerText = `: ${message}`
+        messageSpan.innerText = `: ${chatMessage}`
 
         const messageBubbleSpan = document.createElement('span')
-        messageBubbleSpan.className = 'message-bubble'
+        messageBubbleSpan.className = 'chatMessage-bubble'
 
         messageBubbleSpan.appendChild(userIdSpan)
 
@@ -104,8 +104,8 @@
     const socket = new SockJS("/ws")
     const stompClient = Stomp.over(socket)
     stompClient.connect({}, () => {
-        stompClient.subscribe(`/topic/chat/${chatId}/messages`, message => {
-            const response = JSON.parse(message.body)
+        stompClient.subscribe(`/topic/chat/${chatId}/messages`, chatMessage => {
+            const response = JSON.parse(chatMessage.body)
             showMessage(response.userId, response.content)
         })
     })

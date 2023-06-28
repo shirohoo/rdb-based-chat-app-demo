@@ -1,6 +1,6 @@
 package io.shirohoo.chat.domain;
 
-import io.shirohoo.chat.domain.model.ChatUser;
+import io.shirohoo.chat.domain.model.ChatRoom;
 import io.shirohoo.chat.domain.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -27,7 +27,7 @@ public class Chat {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "chat_id", nullable = false, length = 36)
-    private String chatId;
+    private String id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "host_id", nullable = false, columnDefinition = "VARCHAR(36)")
@@ -49,12 +49,12 @@ public class Chat {
         this.password = password;
     }
 
-    public ChatUser join(User user) {
-        return new ChatUser(this, user);
+    public ChatRoom join(User user) {
+        return new ChatRoom(this, user);
     }
 
     @Override
     public String toString() {
-        return "Chat{chatId='%s', host=%s, topic='%s', createdAt=%s}".formatted(chatId, host, topic, createdAt);
+        return "Chat{id='%s', host='%s', topic='%s', createdAt='%s'}".formatted(id, host, topic, createdAt);
     }
 }

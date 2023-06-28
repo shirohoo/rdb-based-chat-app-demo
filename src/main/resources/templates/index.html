@@ -95,7 +95,7 @@
 <div id="chat-room-list">
     <div th:each="chat : ${chats}" class="chat-room">
         <h2 th:text="${chat.getTopic()}"></h2>
-        <button type="button" th:href="@{/chat(chatId=${chat.getChatId()}, userId='')}">
+        <button type="button" th:href="@{/chat(chatId=${chat.getId()}, userId='')}">
             Enter
         </button>
     </div>

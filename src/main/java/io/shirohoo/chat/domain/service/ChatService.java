@@ -1,31 +1,29 @@
 package io.shirohoo.chat.domain.service;
 
 import io.shirohoo.chat.domain.Chat;
-import io.shirohoo.chat.domain.model.ChatUser;
-import io.shirohoo.chat.domain.model.ChatUserId;
-import io.shirohoo.chat.domain.model.Message;
+import io.shirohoo.chat.domain.model.ChatMessage;
+import io.shirohoo.chat.domain.model.ChatRoom;
+import io.shirohoo.chat.domain.model.ChatRoomId;
 import io.shirohoo.chat.domain.model.User;
+import io.shirohoo.chat.domain.repository.ChatMessageRepository;
 import io.shirohoo.chat.domain.repository.ChatRepository;
-import io.shirohoo.chat.domain.repository.ChatUserRepository;
-import io.shirohoo.chat.domain.repository.MessageRepository;
+import io.shirohoo.chat.domain.repository.ChatRoomRepository;
 import io.shirohoo.chat.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ChatService {
 
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
-    private final MessageRepository messageRepository;
-    private final ChatUserRepository chatUserRepository;
+    private final ChatMessageRepository chatMessageRepository;
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public List<Chat> getChats() {
@@ -37,7 +35,7 @@ public class ChatService {
         if (topic.isBlank()) {
             throw new UnsupportedOperationException("topic is blank");
         }
-        if (password.isBlank()) {
+        if (password == null || password.isBlank()) {
             password = null;
         }
 
@@ -49,37 +47,33 @@ public class ChatService {
     }
 
     @Transactional
-    public ChatUser joinChat(String chatId, String userId) {
-        User user = userRepository.findById(userId)
-                .orElseGet(() -> userRepository.save(new User(userId)));
-
-        ChatUserId chatUserId = new ChatUserId(chatId, userId);
-        if (chatUserRepository.existsById(chatUserId)) {
+    public ChatRoom joinChat(String chatId, String participantId) {
+        ChatRoomId chatRoomId = new ChatRoomId(chatId, participantId);
+        if (chatRoomRepository.existsById(chatRoomId)) {
             //noinspection OptionalGetWithoutIsPresent
-            return chatUserRepository.findById(chatUserId).get();
+            return chatRoomRepository.findById(chatRoomId).get();
         }
 
+        User user = userRepository.findById(participantId).orElseGet(() -> userRepository.save(new User(participantId)));
         Chat chat = chatRepository.findById(chatId).orElseThrow();
-        ChatUser chatUser = chat.join(user);
-        return chatUserRepository.save(chatUser);
+        return chatRoomRepository.save(chat.join(user));
+    }
+
+    @Transactional(readOnly = true)
+    public Set<ChatMessage> getChatMessages(String chatId) {
+        return chatMessageRepository.findByChat(chatId);
     }
 
     @Transactional
-    public void saveMessage(String chatId, String userId, String content) {
+    public void saveChatMessage(String chatId, String userId, String content) {
         if (content == null || content.isBlank()) {
             return;
         }
 
         Chat chat = chatRepository.findById(chatId).orElseThrow();
         User user = userRepository.findById(userId).orElseThrow();
-        Message message = new Message(chat, user, content);
-        messageRepository.save(message);
-        log.info("Saved: {}", message);
-    }
-
-    @Transactional(readOnly = true)
-    public Set<Message> getMessages(String chatId) {
-        return messageRepository.findByChat(chatId);
+        ChatMessage chatMessage = new ChatMessage(chat, user, content);
+        chatMessageRepository.save(chatMessage);
     }
 
 }

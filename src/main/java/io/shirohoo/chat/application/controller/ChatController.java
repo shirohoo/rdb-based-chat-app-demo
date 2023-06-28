@@ -1,8 +1,7 @@
 package io.shirohoo.chat.application.controller;
 
 import io.shirohoo.chat.domain.Chat;
-import io.shirohoo.chat.domain.model.ChatUser;
-import io.shirohoo.chat.domain.model.Message;
+import io.shirohoo.chat.domain.model.ChatRoom;
 import io.shirohoo.chat.domain.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -28,8 +27,18 @@ public class ChatController {
     @SendTo("/topic/chat/{chatId}/messages")
     @MessageMapping("/api/v1/chat/{chatId}/messages")
     public ChatMessage send(@DestinationVariable String chatId, @RequestBody ChatMessage chatMessage) {
-        chatService.saveMessage(chatId, chatMessage.userId(), chatMessage.content());
+        chatService.saveChatMessage(chatId, chatMessage.userId(), chatMessage.content());
         return chatMessage;
+    }
+
+    private record ChatMessage(String userId, String content) {
+    }
+
+    @ResponseBody
+    @PostMapping("/api/v1/chat")
+    public Map<String, String> createChat(@RequestBody CreateChatRequest request) {
+        Chat chat = chatService.createChat(request.hostId, request.topic, request.password);
+        return Map.of("chatId", chat.getId());
     }
 
     @GetMapping("/")
@@ -39,28 +48,18 @@ public class ChatController {
         return "index";
     }
 
-    @ResponseBody
-    @PostMapping("/api/v1/chat")
-    public Map<String, String> createChat(@RequestBody CreateChatRequest request) {
-        Chat chat = chatService.createChat(request.hostId, request.topic, request.password);
-        return Map.of("chatId", chat.getChatId());
-    }
-
     private record CreateChatRequest(String hostId, String topic, String password) {
     }
 
     @GetMapping("/chat")
-    public String joinChat(String chatId, String userId, Model model) {
-        ChatUser chatUser = chatService.joinChat(chatId, userId);
-        Set<Message> messages = chatService.getMessages(chatId);
+    public String joinChat(Model model, String chatId, String userId) {
+        ChatRoom chatRoom = chatService.joinChat(chatId, userId);
+        Set<io.shirohoo.chat.domain.model.ChatMessage> chatMessages = chatService.getChatMessages(chatId);
 
-        model.addAttribute("chatUser", chatUser);
-        model.addAttribute("messages", messages);
+        model.addAttribute("chatRoom", chatRoom);
+        model.addAttribute("chatMessages", chatMessages);
 
         return "chat";
-    }
-
-    private record ChatMessage(String userId, String content) {
     }
 
 }

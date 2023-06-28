@@ -18,14 +18,14 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id", nullable = false, length = 36)
-    private String userId;
+    private String id;
 
-    public User(String userId) {
-        this.userId = userId;
+    public User(String id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
-        return "User{userId='%s'}".formatted(userId);
+        return "User{id='%s'}".formatted(id);
     }
 }

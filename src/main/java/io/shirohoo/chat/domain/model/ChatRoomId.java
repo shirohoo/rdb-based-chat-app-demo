@@ -11,10 +11,10 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatUserId implements Serializable {
+public class ChatRoomId implements Serializable {
 
     private String chat;
 
-    private String user;
+    private String participant;
 
 }

@@ -5,10 +5,12 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -16,31 +18,39 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
+@Getter
 @NoArgsConstructor
-@IdClass(ChatUserId.class)
 @EntityListeners(AuditingEntityListener.class)
-public class ChatUser {
+public class ChatMessage {
 
     @Id
+    @Column(name = "message_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "chat_id", nullable = false, columnDefinition = "VARCHAR(36)")
+    @JoinColumn(name = "chat_id", nullable = false)
     private Chat chat;
 
-    @Id
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", nullable = false, columnDefinition = "VARCHAR(36)")
-    private User user;
+    @JoinColumn(name = "sender_id", nullable = false)
+    private User sender;
+
+    @Column(name = "content", nullable = false)
+    private String content;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    public ChatUser(Chat chat, User user) {
+    public ChatMessage(Chat chat, User sender, String content) {
         this.chat = chat;
-        this.user = user;
+        this.sender = sender;
+        this.content = content;
     }
 
-    public ChatUserId getId() {
-        return new ChatUserId(chat.getChatId(), user.getUserId());
+    @Override
+    public String toString() {
+        return "Message{id='%d', chat='%s', sender='%s', content='%s', createdAt='%s'}".formatted(id, chat, sender, content, createdAt);
     }
 }
