@@ -13,8 +13,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 public class ChatRoomId implements Serializable {
 
-    private String chat;
+	private String chat;
 
-    private String participant;
+	private String participant;
 
 }

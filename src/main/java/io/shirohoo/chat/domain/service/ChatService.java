@@ -20,60 +20,60 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRepository chatRepository;
-    private final UserRepository userRepository;
-    private final ChatMessageRepository chatMessageRepository;
-    private final ChatRoomRepository chatRoomRepository;
+	private final ChatRepository chatRepository;
+	private final UserRepository userRepository;
+	private final ChatMessageRepository chatMessageRepository;
+	private final ChatRoomRepository chatRoomRepository;
 
-    @Transactional
-    public List<Chat> getChats() {
-        return chatRepository.findAll();
-    }
+	@Transactional
+	public List<Chat> getChats() {
+		return chatRepository.findAll();
+	}
 
-    @Transactional
-    public Chat createChat(String hostId, String topic, String password) {
-        if (topic.isBlank()) {
-            throw new UnsupportedOperationException("topic is blank");
-        }
-        if (password == null || password.isBlank()) {
-            password = null;
-        }
+	@Transactional
+	public Chat createChat(String hostId, String topic, String password) {
+		if (topic.isBlank()) {
+			throw new UnsupportedOperationException("topic is blank");
+		}
+		if (password == null || password.isBlank()) {
+			password = null;
+		}
 
-        User host = userRepository.findById(hostId)
-                .orElseGet(() -> userRepository.save(new User(hostId)));
+		User host = userRepository.findById(hostId)
+				.orElseGet(() -> userRepository.save(new User(hostId)));
 
-        Chat chat = new Chat(host, topic, password);
-        return chatRepository.save(chat);
-    }
+		Chat chat = new Chat(host, topic, password);
+		return chatRepository.save(chat);
+	}
 
-    @Transactional
-    public ChatRoom joinChat(String chatId, String participantId) {
-        ChatRoomId chatRoomId = new ChatRoomId(chatId, participantId);
-        if (chatRoomRepository.existsById(chatRoomId)) {
-            //noinspection OptionalGetWithoutIsPresent
-            return chatRoomRepository.findById(chatRoomId).get();
-        }
+	@Transactional
+	public ChatRoom joinChat(String chatId, String participantId) {
+		ChatRoomId chatRoomId = new ChatRoomId(chatId, participantId);
+		if (chatRoomRepository.existsById(chatRoomId)) {
+			//noinspection OptionalGetWithoutIsPresent
+			return chatRoomRepository.findById(chatRoomId).get();
+		}
 
-        User user = userRepository.findById(participantId).orElseGet(() -> userRepository.save(new User(participantId)));
-        Chat chat = chatRepository.findById(chatId).orElseThrow();
-        return chatRoomRepository.save(chat.join(user));
-    }
+		User user = userRepository.findById(participantId).orElseGet(() -> userRepository.save(new User(participantId)));
+		Chat chat = chatRepository.findById(chatId).orElseThrow();
+		return chatRoomRepository.save(chat.join(user));
+	}
 
-    @Transactional(readOnly = true)
-    public Set<ChatMessage> getChatMessages(String chatId) {
-        return chatMessageRepository.findByChat(chatId);
-    }
+	@Transactional(readOnly = true)
+	public Set<ChatMessage> getChatMessages(String chatId) {
+		return chatMessageRepository.findByChat(chatId);
+	}
 
-    @Transactional
-    public void saveChatMessage(String chatId, String userId, String content) {
-        if (content == null || content.isBlank()) {
-            return;
-        }
+	@Transactional
+	public void saveChatMessage(String chatId, String userId, String content) {
+		if (content == null || content.isBlank()) {
+			return;
+		}
 
-        Chat chat = chatRepository.findById(chatId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
-        ChatMessage chatMessage = new ChatMessage(chat, user, content);
-        chatMessageRepository.save(chatMessage);
-    }
+		Chat chat = chatRepository.findById(chatId).orElseThrow();
+		User user = userRepository.findById(userId).orElseThrow();
+		ChatMessage chatMessage = new ChatMessage(chat, user, content);
+		chatMessageRepository.save(chatMessage);
+	}
 
 }

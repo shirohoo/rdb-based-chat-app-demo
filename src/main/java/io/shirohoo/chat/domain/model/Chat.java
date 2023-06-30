@@ -24,37 +24,37 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class Chat {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "chat_id", nullable = false, length = 36)
-    private String id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@Column(name = "chat_id", nullable = false, length = 36)
+	private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "host_id", nullable = false, columnDefinition = "VARCHAR(36)")
-    private User host;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "host_id", nullable = false, columnDefinition = "VARCHAR(36)")
+	private User host;
 
-    @Column(name = "topic", nullable = false)
-    private String topic;
+	@Column(name = "topic", nullable = false)
+	private String topic;
 
-    @Column(name = "password")
-    private String password;
+	@Column(name = "password")
+	private String password;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+	@CreatedDate
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
 
-    public Chat(User host, String topic, String password) {
-        this.host = host;
-        this.topic = topic;
-        this.password = password;
-    }
+	public Chat(User host, String topic, String password) {
+		this.host = host;
+		this.topic = topic;
+		this.password = password;
+	}
 
-    public ChatRoom join(User user) {
-        return new ChatRoom(this, user);
-    }
+	public ChatRoom join(User user) {
+		return new ChatRoom(this, user);
+	}
 
-    @Override
-    public String toString() {
-        return "Chat{id='%s', host='%s', topic='%s', createdAt='%s'}".formatted(id, host, topic, createdAt);
-    }
+	@Override
+	public String toString() {
+		return "Chat{id='%s', host='%s', topic='%s', createdAt='%s'}".formatted(id, host, topic, createdAt);
+	}
 }

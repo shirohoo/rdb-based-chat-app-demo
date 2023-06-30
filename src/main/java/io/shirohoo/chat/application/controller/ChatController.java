@@ -22,44 +22,44 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatService chatService;
+	private final ChatService chatService;
 
-    @SendTo("/topic/chat/{chatId}/messages")
-    @MessageMapping("/api/v1/chat/{chatId}/messages")
-    public ChatMessage send(@DestinationVariable String chatId, @RequestBody ChatMessage chatMessage) {
-        chatService.saveChatMessage(chatId, chatMessage.userId(), chatMessage.content());
-        return chatMessage;
-    }
+	@SendTo("/topic/chat/{chatId}/messages")
+	@MessageMapping("/api/v1/chat/{chatId}/messages")
+	public ChatMessage send(@DestinationVariable String chatId, @RequestBody ChatMessage chatMessage) {
+		chatService.saveChatMessage(chatId, chatMessage.userId(), chatMessage.content());
+		return chatMessage;
+	}
 
-    private record ChatMessage(String userId, String content) {
-    }
+	private record ChatMessage(String userId, String content) {
+	}
 
-    @ResponseBody
-    @PostMapping("/api/v1/chat")
-    public Map<String, String> createChat(@RequestBody CreateChatRequest request) {
-        Chat chat = chatService.createChat(request.hostId, request.topic, request.password);
-        return Map.of("chatId", chat.getId());
-    }
+	@ResponseBody
+	@PostMapping("/api/v1/chat")
+	public Map<String, String> createChat(@RequestBody CreateChatRequest request) {
+		Chat chat = chatService.createChat(request.hostId, request.topic, request.password);
+		return Map.of("chatId", chat.getId());
+	}
 
-    @GetMapping("/")
-    public String index(Model model) {
-        List<Chat> chats = chatService.getChats();
-        model.addAttribute("chats", chats);
-        return "index";
-    }
+	@GetMapping("/")
+	public String index(Model model) {
+		List<Chat> chats = chatService.getChats();
+		model.addAttribute("chats", chats);
+		return "index";
+	}
 
-    private record CreateChatRequest(String hostId, String topic, String password) {
-    }
+	private record CreateChatRequest(String hostId, String topic, String password) {
+	}
 
-    @GetMapping("/chat")
-    public String joinChat(Model model, String chatId, String userId) {
-        ChatRoom chatRoom = chatService.joinChat(chatId, userId);
-        Set<io.shirohoo.chat.domain.model.ChatMessage> chatMessages = chatService.getChatMessages(chatId);
+	@GetMapping("/chat")
+	public String joinChat(Model model, String chatId, String userId) {
+		ChatRoom chatRoom = chatService.joinChat(chatId, userId);
+		Set<io.shirohoo.chat.domain.model.ChatMessage> chatMessages = chatService.getChatMessages(chatId);
 
-        model.addAttribute("chatRoom", chatRoom);
-        model.addAttribute("chatMessages", chatMessages);
+		model.addAttribute("chatRoom", chatRoom);
+		model.addAttribute("chatMessages", chatMessages);
 
-        return "chat";
-    }
+		return "chat";
+	}
 
 }

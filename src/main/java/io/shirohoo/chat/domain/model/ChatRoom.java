@@ -21,26 +21,26 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class ChatRoom {
 
-    @Id
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "chat_id", nullable = false, columnDefinition = "VARCHAR(36)")
-    private Chat chat;
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "chat_id", nullable = false, columnDefinition = "VARCHAR(36)")
+	private Chat chat;
 
-    @Id
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "participant_id", nullable = false, columnDefinition = "VARCHAR(36)")
-    private User participant;
+	@Id
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "participant_id", nullable = false, columnDefinition = "VARCHAR(36)")
+	private User participant;
 
-    @CreatedDate
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
+	@CreatedDate
+	@Column(name = "created_at", nullable = false)
+	private LocalDateTime createdAt;
 
-    public ChatRoom(Chat chat, User participant) {
-        this.chat = chat;
-        this.participant = participant;
-    }
+	public ChatRoom(Chat chat, User participant) {
+		this.chat = chat;
+		this.participant = participant;
+	}
 
-    public ChatRoomId getId() {
-        return new ChatRoomId(chat.getId(), participant.getId());
-    }
+	public ChatRoomId getId() {
+		return new ChatRoomId(chat.getId(), participant.getId());
+	}
 }
